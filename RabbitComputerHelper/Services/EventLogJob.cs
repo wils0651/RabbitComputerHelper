@@ -1,14 +1,7 @@
-﻿using RabbitMQ.Client.Events;
+﻿using RabbitComputerHelper.Contracts;
 using RabbitMQ.Client;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using RabbitMQ.Client.Events;
 using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using RabbitComputerHelper.Contracts;
 
 namespace RabbitComputerHelper.Services
 {
