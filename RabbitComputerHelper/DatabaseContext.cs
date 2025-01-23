@@ -8,7 +8,7 @@ namespace RabbitComputerHelper
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
         public DbSet<Computer> Computer { get; set; }
-        public DbSet<Models.ComputerTask> ComputerTask { get; set; }
+        public DbSet<ComputerTask> ComputerTask { get; set; }
         public DbSet<Message> Message { get; set; }
     }
 }

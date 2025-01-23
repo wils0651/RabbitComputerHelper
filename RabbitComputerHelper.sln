@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitComputerHelper", "RabbitComputerHelper\RabbitComputerHelper.csproj", "{1418CD16-D77C-4B4D-9FF5-FE7488CEBC65}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitComputerHelper.Test", "RabbitComputerHelper.Test\RabbitComputerHelper.Test.csproj", "{3D101FEB-8380-4CEF-B6A9-6D2DEFD47E20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{1418CD16-D77C-4B4D-9FF5-FE7488CEBC65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1418CD16-D77C-4B4D-9FF5-FE7488CEBC65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1418CD16-D77C-4B4D-9FF5-FE7488CEBC65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D101FEB-8380-4CEF-B6A9-6D2DEFD47E20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D101FEB-8380-4CEF-B6A9-6D2DEFD47E20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D101FEB-8380-4CEF-B6A9-6D2DEFD47E20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D101FEB-8380-4CEF-B6A9-6D2DEFD47E20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

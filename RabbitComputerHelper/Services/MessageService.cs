@@ -1,16 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RabbitComputerHelper.Contracts;
+﻿using RabbitComputerHelper.Contracts;
 using RabbitComputerHelper.Models;
 
 namespace RabbitComputerHelper.Services
 {
     public class MessageService : IMessageService
     {
-        private readonly DatabaseContext _context;
+        private readonly IComputerRepository _computerRepository;
+        private readonly IComputerTaskRepository _computerTaskRepository;
+        private readonly IMessageRepository _messageRepository;
 
-        public MessageService(DatabaseContext context)
+        public MessageService(
+            IComputerRepository computerRepository,
+            IComputerTaskRepository computerTaskRepository,
+            IMessageRepository messageRepository)
         {
-            this._context = context;
+            this._computerRepository = computerRepository;
+            this._computerTaskRepository = computerTaskRepository;
+            this._messageRepository = messageRepository;
         }
 
         public async Task ParseAndSaveMessageAsync(string messagePhrase)
@@ -36,8 +42,7 @@ namespace RabbitComputerHelper.Services
             sentDate = DateTime.SpecifyKind(sentDate, DateTimeKind.Local);
 
             // find the parts
-            var computer = await _context.Computer
-                .FirstOrDefaultAsync(c => c.Name == computerName);
+            var computer = await _computerRepository.GetByNameAsync(computerName);
 
             if (computer == null)
             {
@@ -52,8 +57,7 @@ namespace RabbitComputerHelper.Services
                 taskPhrase = "Reboot";
             }
 
-            var computerTask = await _context.ComputerTask
-                .FirstOrDefaultAsync(t => t.Name == taskPhrase);
+            var computerTask = await _computerTaskRepository.GetByNameAsync(taskPhrase);
 
             if (computerTask == null)
             {
@@ -61,11 +65,13 @@ namespace RabbitComputerHelper.Services
                 return;
             }
 
-            // create the message object
-            var message = new Message(computer, computerTask, sentDate.ToUniversalTime(), note);
+            var convertedDate = sentDate.ToUniversalTime();
 
-            _context.Message.Add(message);
-            await _context.SaveChangesAsync();
+            // create the message object
+            var message = new Message(computer, computerTask, convertedDate, note);
+
+            await _messageRepository.AddMessageAsync(message);
+            await _messageRepository.SaveChangesAsync();
         }
     }
 }
