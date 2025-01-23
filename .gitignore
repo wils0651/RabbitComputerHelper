@@ -5,3 +5,6 @@
 /.vs/RabbitComputerHelper
 /RabbitComputerHelper/bin/Debug/net8.0
 /RabbitComputerHelper/obj
+/.vs/ProjectEvaluation
+/RabbitComputerHelper.Test/bin/Debug/net8.0
+/RabbitComputerHelper.Test/obj
