@@ -10,7 +10,7 @@ namespace RabbitComputerHelper.Repositories
 
         public MessageRepository(DatabaseContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         public async Task<List<Message>> ListMessagesAsync()

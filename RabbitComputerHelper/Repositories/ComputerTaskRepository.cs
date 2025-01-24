@@ -13,16 +13,26 @@ namespace RabbitComputerHelper.Repositories
             _context = context;
         }
 
-        public async Task<ComputerTask> GetByIdAsync(int computerTaskId)
+        public async Task<ComputerTask?> GetByIdAsync(int computerTaskId)
         {
             return await _context.ComputerTask
                 .FirstOrDefaultAsync(c => c.ComputerTaskId == computerTaskId);
         }
 
-        public async Task<ComputerTask> GetByNameAsync(string name)
+        public async Task<ComputerTask?> GetByNameAsync(string name)
         {
             return await _context.ComputerTask
                 .FirstOrDefaultAsync(c => c.Name.Equals(name));
+        }
+
+        public async Task AddAsync(ComputerTask computerTask)
+        {
+            await _context.AddAsync(computerTask);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

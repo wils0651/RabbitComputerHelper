@@ -10,11 +10,16 @@ namespace RabbitComputerHelper.Models
         [Column("computerid")]
         public int ComputerId { get; set; }
 
-        [Required]
+        [MaxLength(128)]
         [Column("name")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
+        [MaxLength(256)]
         [Column("description")]
-        public string Description { get; set; }
+        public required string Description { get; set; }
+
+        [MaxLength(128)]
+        [Column("ipaddress")]
+        public string? IpAddress { get; set; }
     }
 }

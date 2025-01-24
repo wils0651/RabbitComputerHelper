@@ -10,12 +10,14 @@ namespace RabbitComputerHelper.Test.Services
         IComputerRepository _computerRepository = Substitute.For<IComputerRepository>();
         IComputerTaskRepository _computerTaskRepository = Substitute.For<IComputerTaskRepository>();
         IMessageRepository _messageRepository = Substitute.For<IMessageRepository>();
+        IUnclassifiedMessageRepository _unclassifiedMessageRepository = Substitute.For<IUnclassifiedMessageRepository>();
 
         IMessageService _messageService;
 
         public MessageServiceTests()
         {
-            _messageService = new MessageService(_computerRepository, _computerTaskRepository, _messageRepository);
+            _messageService = new MessageService(
+                _computerRepository, _computerTaskRepository, _messageRepository, _unclassifiedMessageRepository);
         }
 
         [Fact]
@@ -24,8 +26,8 @@ namespace RabbitComputerHelper.Test.Services
             // Arrange
             const string messagePhrase = "computerName | 2025-01-22T10:31:01 | taskPhrase";
 
-            var computer = new Computer();
-            var computerTask = new ComputerTask();
+            var computer = new Computer() { Name = "computerName", Description = "a test computer"};
+            var computerTask = new ComputerTask() { Name = "taskPhrase" };
 
             _computerRepository.GetByNameAsync("computerName").Returns(computer);
 

@@ -8,15 +8,18 @@ namespace RabbitComputerHelper.Services
         private readonly IComputerRepository _computerRepository;
         private readonly IComputerTaskRepository _computerTaskRepository;
         private readonly IMessageRepository _messageRepository;
+        private readonly IUnclassifiedMessageRepository _unclassifiedMessageRepository;
 
         public MessageService(
             IComputerRepository computerRepository,
             IComputerTaskRepository computerTaskRepository,
-            IMessageRepository messageRepository)
+            IMessageRepository messageRepository,
+            IUnclassifiedMessageRepository unclassifiedMessageRepository)
         {
-            this._computerRepository = computerRepository;
-            this._computerTaskRepository = computerTaskRepository;
-            this._messageRepository = messageRepository;
+            _computerRepository = computerRepository;
+            _computerTaskRepository = computerTaskRepository;
+            _messageRepository = messageRepository;
+            _unclassifiedMessageRepository = unclassifiedMessageRepository;
         }
 
         public async Task ParseAndSaveMessageAsync(string messagePhrase)
@@ -41,29 +44,33 @@ namespace RabbitComputerHelper.Services
             }
             sentDate = DateTime.SpecifyKind(sentDate, DateTimeKind.Local);
 
-            // find the parts
-            var computer = await _computerRepository.GetByNameAsync(computerName);
-
-            if (computer == null)
-            {
-                // todo: do something
-                return;
-            }
-
             var note = string.Empty;
             if (taskPhrase.Contains("Reboot"))
             {
                 note = taskPhrase.Replace("Reboot", "").Trim();
+
                 taskPhrase = "Reboot";
             }
 
+            // find the parts
+            var computer = await _computerRepository.GetByNameAsync(computerName);
             var computerTask = await _computerTaskRepository.GetByNameAsync(taskPhrase);
 
-            if (computerTask == null)
+            if (computer == null && computerTask == null)
             {
-                // todo: do something
+                await CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
                 return;
             }
+            else if (computer == null && !string.IsNullOrEmpty(computerName))
+            {
+                computer = await CreateAndSaveComputerAsync(computerName);
+            }
+            else if (computerTask == null && !string.IsNullOrEmpty(taskPhrase))
+            {
+                computerTask = await CreateAndSaveComputerTaskAsync(taskPhrase);
+            }
+
+            CheckAndUpdateIpAddress(computer, note);
 
             var convertedDate = sentDate.ToUniversalTime();
 
@@ -72,6 +79,55 @@ namespace RabbitComputerHelper.Services
 
             await _messageRepository.AddMessageAsync(message);
             await _messageRepository.SaveChangesAsync();
+        }
+
+        private async Task CreateAndSaveUnclassifiedMessageAsync(string messageContent)
+        {
+            var unclassifiedMessage = new UnclassifiedMessage(messageContent);
+
+            await _unclassifiedMessageRepository.AddMessageAsync(unclassifiedMessage);
+            await _unclassifiedMessageRepository.SaveChangesAsync();
+        }
+
+        private async Task<Computer> CreateAndSaveComputerAsync(string computerName)
+        {
+            var computer = new Computer
+            {
+                Name = computerName,
+                Description = $"Created from message processed on {DateTime.Now:f}"
+            };
+
+            await _computerRepository.AddAsync(computer);
+            await _computerRepository.SaveChangesAsync();
+            return computer;
+        }
+
+        private async Task<ComputerTask> CreateAndSaveComputerTaskAsync(string taskPhrase)
+        {
+            var computerTask = new ComputerTask
+            {
+                Name = taskPhrase,
+                Description = $"Created from message processed on {DateTime.Now:f}"
+            };
+
+            await _computerTaskRepository.AddAsync(computerTask);
+            await _computerTaskRepository.SaveChangesAsync();
+            return computerTask;
+        }
+
+        private static void CheckAndUpdateIpAddress(Computer computer, string note)
+        {
+            if (string.IsNullOrEmpty(note))
+            {
+                return;
+            }
+
+            // todo: check if note is an ipAddress
+
+            if (computer.IpAddress != note)
+            {
+                computer.IpAddress = note;
+            }
         }
     }
 }

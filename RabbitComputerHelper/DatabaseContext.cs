@@ -10,5 +10,6 @@ namespace RabbitComputerHelper
         public DbSet<Computer> Computer { get; set; }
         public DbSet<ComputerTask> ComputerTask { get; set; }
         public DbSet<Message> Message { get; set; }
+        public DbSet<UnclassifiedMessage> UnclassifiedMessage { get; set; }
     }
 }

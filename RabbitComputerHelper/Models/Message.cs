@@ -27,7 +27,7 @@ namespace RabbitComputerHelper.Models
 
         [Column("note")]
         [MaxLength(255)]
-        public string Note { get; set; }
+        public string? Note { get; set; }
 
         public Message(Computer computer, ComputerTask computerTask, DateTime sentDate, string note)
         {
@@ -37,7 +37,7 @@ namespace RabbitComputerHelper.Models
             CreatedDate = sentDate;
         }
 
-        public Message()
+        private Message()
         {
         }
     }

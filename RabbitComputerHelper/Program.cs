@@ -21,6 +21,7 @@ services.AddScoped<IMessageService, MessageService>();
 services.AddScoped<IComputerRepository, ComputerRepository>();
 services.AddScoped<IComputerTaskRepository, ComputerTaskRepository>();
 services.AddScoped<IMessageRepository, MessageRepository>();
+services.AddScoped<IUnclassifiedMessageRepository, UnclassifiedMessageRepository>();
 
 services.AddDbContext<DatabaseContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
