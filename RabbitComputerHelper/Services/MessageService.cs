@@ -29,7 +29,7 @@ namespace RabbitComputerHelper.Services
 
             if (messageParts.Length == 0)
             {
-                // todo: do something
+                await CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
                 return;
             }
 

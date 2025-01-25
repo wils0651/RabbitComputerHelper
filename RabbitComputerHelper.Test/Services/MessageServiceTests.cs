@@ -26,7 +26,7 @@ namespace RabbitComputerHelper.Test.Services
             // Arrange
             const string messagePhrase = "computerName | 2025-01-22T10:31:01 | taskPhrase";
 
-            var computer = new Computer() { Name = "computerName", Description = "a test computer"};
+            var computer = new Computer() { Name = "computerName", Description = "a test computer" };
             var computerTask = new ComputerTask() { Name = "taskPhrase" };
 
             _computerRepository.GetByNameAsync("computerName").Returns(computer);
