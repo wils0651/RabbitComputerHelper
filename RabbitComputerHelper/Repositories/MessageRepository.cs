@@ -4,11 +4,11 @@ using RabbitComputerHelper.Models;
 
 namespace RabbitComputerHelper.Repositories
 {
-    public class MessageRepository : IMessageRepository
+    public class MessageRepository : AbstractRepository, IMessageRepository
     {
         private readonly DatabaseContext _context;
 
-        public MessageRepository(DatabaseContext context)
+        public MessageRepository(DatabaseContext context): base(context)
         {
             _context = context;
         }
@@ -22,14 +22,9 @@ namespace RabbitComputerHelper.Repositories
                 .ToListAsync();
         }
 
-        public async Task AddMessageAsync(Message message)
+        public async Task AddAsync(Message message)
         {
             await _context.AddAsync(message);
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
         }
     }
 }

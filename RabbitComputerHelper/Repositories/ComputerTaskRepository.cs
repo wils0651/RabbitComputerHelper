@@ -4,11 +4,11 @@ using RabbitComputerHelper.Models;
 
 namespace RabbitComputerHelper.Repositories
 {
-    public class ComputerTaskRepository : IComputerTaskRepository
+    public class ComputerTaskRepository : AbstractRepository, IComputerTaskRepository
     {
         private readonly DatabaseContext _context;
 
-        public ComputerTaskRepository(DatabaseContext context)
+        public ComputerTaskRepository(DatabaseContext context): base(context)
         {
             _context = context;
         }
@@ -28,11 +28,6 @@ namespace RabbitComputerHelper.Repositories
         public async Task AddAsync(ComputerTask computerTask)
         {
             await _context.AddAsync(computerTask);
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
         }
     }
 }

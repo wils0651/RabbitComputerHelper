@@ -77,7 +77,7 @@ namespace RabbitComputerHelper.Services
             // create the message object
             var message = new Message(computer, computerTask, convertedDate, note);
 
-            await _messageRepository.AddMessageAsync(message);
+            await _messageRepository.AddAsync(message);
             await _messageRepository.SaveChangesAsync();
         }
 
@@ -85,7 +85,7 @@ namespace RabbitComputerHelper.Services
         {
             var unclassifiedMessage = new UnclassifiedMessage(messageContent);
 
-            await _unclassifiedMessageRepository.AddMessageAsync(unclassifiedMessage);
+            await _unclassifiedMessageRepository.AddAsync(unclassifiedMessage);
             await _unclassifiedMessageRepository.SaveChangesAsync();
         }
 

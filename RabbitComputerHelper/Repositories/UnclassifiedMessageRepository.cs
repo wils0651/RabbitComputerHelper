@@ -4,11 +4,11 @@ using RabbitComputerHelper.Models;
 
 namespace RabbitComputerHelper.Repositories
 {
-    public class UnclassifiedMessageRepository : IUnclassifiedMessageRepository
+    public class UnclassifiedMessageRepository : AbstractRepository, IUnclassifiedMessageRepository
     {
         private readonly DatabaseContext _context;
 
-        public UnclassifiedMessageRepository(DatabaseContext context)
+        public UnclassifiedMessageRepository(DatabaseContext context): base(context)
         {
             _context = context;
         }
@@ -20,14 +20,9 @@ namespace RabbitComputerHelper.Repositories
                 .ToListAsync();
         }
 
-        public async Task AddMessageAsync(UnclassifiedMessage unclassifiedMessage)
+        public async Task AddAsync(UnclassifiedMessage unclassifiedMessage)
         {
             await _context.AddAsync(unclassifiedMessage);
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
         }
     }
 }

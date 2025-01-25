@@ -6,7 +6,7 @@ namespace RabbitComputerHelper.Contracts
     {
         public Task<List<Message>> ListMessagesAsync();
 
-        public Task AddMessageAsync(Message message);
+        public Task AddAsync(Message message);
 
         public Task SaveChangesAsync();
     }
