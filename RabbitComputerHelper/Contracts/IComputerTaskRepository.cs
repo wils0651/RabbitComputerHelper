@@ -4,7 +4,8 @@ namespace RabbitComputerHelper.Contracts
 {
     public interface IComputerTaskRepository
     {
-        Task AddAsync(ComputerTask computerTask);
+        public Task AddAsync<T>(T entity) where T : class;
+
         public Task<ComputerTask?> GetByIdAsync(int computerTaskId);
 
         public Task<ComputerTask?> GetByNameAsync(string name);

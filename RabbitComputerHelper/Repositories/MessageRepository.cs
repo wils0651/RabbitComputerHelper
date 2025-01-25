@@ -21,10 +21,5 @@ namespace RabbitComputerHelper.Repositories
                 .OrderByDescending(m => m.CreatedDate)
                 .ToListAsync();
         }
-
-        public async Task AddAsync(Message message)
-        {
-            await _context.AddAsync(message);
-        }
     }
 }

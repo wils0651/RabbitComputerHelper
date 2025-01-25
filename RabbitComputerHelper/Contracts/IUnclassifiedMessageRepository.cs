@@ -4,8 +4,10 @@ namespace RabbitComputerHelper.Contracts
 {
     public interface IUnclassifiedMessageRepository
     {
-        Task AddAsync(UnclassifiedMessage unclassifiedMessage);
+        public Task AddAsync<T>(T entity) where T : class;
+
         Task<List<UnclassifiedMessage>> ListAsync();
+
         Task SaveChangesAsync();
     }
 }

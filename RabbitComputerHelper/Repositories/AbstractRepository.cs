@@ -13,5 +13,10 @@
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddAsync<T>(T entity) where T : class
+        {
+            await _context.AddAsync(entity);
+        }
     }
 }

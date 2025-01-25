@@ -6,7 +6,7 @@ namespace RabbitComputerHelper.Contracts
     {
         public Task<List<Message>> ListMessagesAsync();
 
-        public Task AddAsync(Message message);
+        public Task AddAsync<T>(T entity) where T : class;
 
         public Task SaveChangesAsync();
     }

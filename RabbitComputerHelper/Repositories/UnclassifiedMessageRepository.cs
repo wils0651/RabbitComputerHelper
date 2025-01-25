@@ -19,10 +19,5 @@ namespace RabbitComputerHelper.Repositories
                 .OrderByDescending(um => um.CreatedDate)
                 .ToListAsync();
         }
-
-        public async Task AddAsync(UnclassifiedMessage unclassifiedMessage)
-        {
-            await _context.AddAsync(unclassifiedMessage);
-        }
     }
 }

@@ -24,10 +24,5 @@ namespace RabbitComputerHelper.Repositories
             return await _context.ComputerTask
                 .FirstOrDefaultAsync(c => c.Name.Equals(name));
         }
-
-        public async Task AddAsync(ComputerTask computerTask)
-        {
-            await _context.AddAsync(computerTask);
-        }
     }
 }
