@@ -11,14 +11,14 @@ namespace RabbitComputerHelper.Test.Services
         private readonly IComputerRepository _computerRepository = Substitute.For<IComputerRepository>();
         private readonly IComputerTaskRepository _computerTaskRepository = Substitute.For<IComputerTaskRepository>();
         private readonly IMessageRepository _messageRepository = Substitute.For<IMessageRepository>();
-        private readonly IUnclassifiedMessageRepository _unclassifiedMessageRepository = Substitute.For<IUnclassifiedMessageRepository>();
+        private readonly IUnclassifiedMessageService _unclassifiedMessageService = Substitute.For<IUnclassifiedMessageService>();
 
         private readonly IMessageService _messageService;
 
         public MessageServiceTests()
         {
             _messageService = new MessageService(
-                _computerRepository, _computerTaskRepository, _messageRepository, _unclassifiedMessageRepository);
+                _computerRepository, _computerTaskRepository, _messageRepository, _unclassifiedMessageService);
         }
 
         [Fact]
@@ -52,9 +52,8 @@ namespace RabbitComputerHelper.Test.Services
 
             // Assert
             await _messageRepository.DidNotReceive().AddAsync(Arg.Any<Message>());
-            
-            await _unclassifiedMessageRepository.Received().AddAsync(Arg.Any<UnclassifiedMessage>());
-            await _unclassifiedMessageRepository.Received().SaveChangesAsync();
+         
+            await _unclassifiedMessageService.Received().CreateAndSaveUnclassifiedMessageAsync(Arg.Any<string>());
         }
         
         [Fact]
@@ -94,8 +93,7 @@ namespace RabbitComputerHelper.Test.Services
             await _messageService.ParseAndSaveMessageAsync(messagePhrase);
 
             // Assert
-            await _unclassifiedMessageRepository.Received().AddAsync(Arg.Any<UnclassifiedMessage>());
-            await _unclassifiedMessageRepository.Received().SaveChangesAsync();
+            await _unclassifiedMessageService.Received().CreateAndSaveUnclassifiedMessageAsync(Arg.Any<string>());
             
             await _messageRepository.DidNotReceive().AddAsync(Arg.Any<Message>());
             await _messageRepository.DidNotReceive().SaveChangesAsync();

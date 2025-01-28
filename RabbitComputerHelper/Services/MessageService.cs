@@ -8,18 +8,18 @@ namespace RabbitComputerHelper.Services
         private readonly IComputerRepository _computerRepository;
         private readonly IComputerTaskRepository _computerTaskRepository;
         private readonly IMessageRepository _messageRepository;
-        private readonly IUnclassifiedMessageRepository _unclassifiedMessageRepository;
+        private readonly IUnclassifiedMessageService _unclassifiedMessageService;
 
         public MessageService(
             IComputerRepository computerRepository,
             IComputerTaskRepository computerTaskRepository,
             IMessageRepository messageRepository,
-            IUnclassifiedMessageRepository unclassifiedMessageRepository)
+            IUnclassifiedMessageService unclassifiedMessageService)
         {
             _computerRepository = computerRepository;
             _computerTaskRepository = computerTaskRepository;
             _messageRepository = messageRepository;
-            _unclassifiedMessageRepository = unclassifiedMessageRepository;
+            _unclassifiedMessageService = unclassifiedMessageService;
         }
 
         public async Task ParseAndSaveMessageAsync(string messagePhrase)
@@ -29,7 +29,7 @@ namespace RabbitComputerHelper.Services
 
             if (messageParts.Length != 3)
             {
-                await CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
+                await _unclassifiedMessageService.CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace RabbitComputerHelper.Services
 
             if (computerTask == null || computer == null && string.IsNullOrEmpty(computerName))
             {
-                await CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
+                await _unclassifiedMessageService.CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
                 return;
             }
             
@@ -73,14 +73,6 @@ namespace RabbitComputerHelper.Services
 
             await _messageRepository.AddAsync(message);
             await _messageRepository.SaveChangesAsync();
-        }
-
-        private async Task CreateAndSaveUnclassifiedMessageAsync(string messageContent)
-        {
-            var unclassifiedMessage = new UnclassifiedMessage(messageContent);
-
-            await _unclassifiedMessageRepository.AddAsync(unclassifiedMessage);
-            await _unclassifiedMessageRepository.SaveChangesAsync();
         }
 
         private async Task<Computer> CreateAndSaveComputerAsync(string computerName)

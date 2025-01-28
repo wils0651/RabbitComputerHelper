@@ -33,7 +33,7 @@ namespace RabbitComputerHelper.Services
             await channel.QueueDeclareAsync(
                 queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-            Console.WriteLine("Waiting for messages.");
+            Console.WriteLine("Waiting for EventLog messages.");
 
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.ReceivedAsync += async (model, ea) =>
