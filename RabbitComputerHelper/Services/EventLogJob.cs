@@ -7,10 +7,10 @@ namespace RabbitComputerHelper.Services
 {
     internal class EventLogJob
     {
-        const string queueName = "eventLog_queue";
-        const string HostName = "192.168.1.2";
-        const string UserName = "test";
-        const string Password = "test";
+        private const string QueueName = "eventLog_queue";
+        private const string HostName = "192.168.1.2";
+        private const string UserName = "test";
+        private const string Password = "test";
         private readonly IMessageService _messageService;
 
         public EventLogJob(IMessageService messageService)
@@ -31,7 +31,7 @@ namespace RabbitComputerHelper.Services
             using var channel = await connection.CreateChannelAsync();
 
             await channel.QueueDeclareAsync(
-                queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+                queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
             Console.WriteLine("Waiting for messages.");
 
@@ -42,11 +42,9 @@ namespace RabbitComputerHelper.Services
                 var message = Encoding.UTF8.GetString(body);
                 Console.WriteLine($"Received: {message}");
                 await _messageService.ParseAndSaveMessageAsync(message);
-
-                //return Task.CompletedTask;
             };
 
-            await channel.BasicConsumeAsync(queueName, autoAck: true, consumer: consumer);
+            await channel.BasicConsumeAsync(QueueName, autoAck: true, consumer: consumer);
 
             Console.WriteLine(" Press [enter] to exit.");
             Console.ReadLine();

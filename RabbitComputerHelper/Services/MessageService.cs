@@ -27,7 +27,7 @@ namespace RabbitComputerHelper.Services
             // parse the message
             var messageParts = messagePhrase.Split('|');
 
-            if (messageParts.Length == 0)
+            if (messageParts.Length != 3)
             {
                 await CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
                 return;
@@ -56,20 +56,14 @@ namespace RabbitComputerHelper.Services
             var computer = await _computerRepository.GetByNameAsync(computerName);
             var computerTask = await _computerTaskRepository.GetByNameAsync(taskPhrase);
 
-            if (computer == null && computerTask == null)
+            if (computerTask == null || computer == null && string.IsNullOrEmpty(computerName))
             {
                 await CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
                 return;
             }
-            else if (computer == null && !string.IsNullOrEmpty(computerName))
-            {
-                computer = await CreateAndSaveComputerAsync(computerName);
-            }
-            else if (computerTask == null && !string.IsNullOrEmpty(taskPhrase))
-            {
-                computerTask = await CreateAndSaveComputerTaskAsync(taskPhrase);
-            }
-
+            
+            computer ??= await CreateAndSaveComputerAsync(computerName);
+            
             CheckAndUpdateIpAddress(computer, note);
 
             var convertedDate = sentDate.ToUniversalTime();
@@ -100,19 +94,6 @@ namespace RabbitComputerHelper.Services
             await _computerRepository.AddAsync(computer);
             await _computerRepository.SaveChangesAsync();
             return computer;
-        }
-
-        private async Task<ComputerTask> CreateAndSaveComputerTaskAsync(string taskPhrase)
-        {
-            var computerTask = new ComputerTask
-            {
-                Name = taskPhrase,
-                Description = $"Created from message processed on {DateTime.Now:f}"
-            };
-
-            await _computerTaskRepository.AddAsync(computerTask);
-            await _computerTaskRepository.SaveChangesAsync();
-            return computerTask;
         }
 
         private static void CheckAndUpdateIpAddress(Computer computer, string note)
