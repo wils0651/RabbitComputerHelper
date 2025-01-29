@@ -52,7 +52,5 @@ public class ProbeService : IProbeService
 
         await _probeDataRepository.AddAsync(probeData);
         await _probeDataRepository.SaveChangesAsync();
-
-        Console.Write("Successfully  probed");
     }
 }

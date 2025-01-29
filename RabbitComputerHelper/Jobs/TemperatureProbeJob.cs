@@ -20,8 +20,6 @@ internal class TemperatureProbeJob
 
     public async Task RunAsync()
     {
-        return; // TODO: Disabling job
-
         var factory = new ConnectionFactory
         {
             HostName = HostName,

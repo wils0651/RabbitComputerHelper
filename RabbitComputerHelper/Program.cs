@@ -17,11 +17,17 @@ var builder = new ConfigurationBuilder()
 IConfiguration configuration = builder.Build();
 
 services.AddSingleton<EventLogJob>();
+services.AddSingleton<TemperatureProbeJob>();
+
 services.AddScoped<IMessageService, MessageService>();
+services.AddScoped<IProbeService, ProbeService>();
+services.AddScoped<IUnclassifiedMessageService, UnclassifiedMessageService>();
 
 services.AddScoped<IComputerRepository, ComputerRepository>();
 services.AddScoped<IComputerTaskRepository, ComputerTaskRepository>();
 services.AddScoped<IMessageRepository, MessageRepository>();
+services.AddScoped<IProbeDataRepository, ProbeDataRepository>();
+services.AddScoped<IProbeRepository, ProbeRepository>();
 services.AddScoped<IUnclassifiedMessageRepository, UnclassifiedMessageRepository>();
 
 services.AddDbContext<DatabaseContext>(options =>
@@ -30,5 +36,9 @@ services.AddDbContext<DatabaseContext>(options =>
 var serviceProvider = services.BuildServiceProvider();
 
 var eventLogJob = serviceProvider.GetService<EventLogJob>();
+var temperatureProbeJob = serviceProvider.GetService<TemperatureProbeJob>();
 
-await eventLogJob.RunAsync();
+var eventLogTask = eventLogJob.RunAsync();
+var temperatureProbeTask = temperatureProbeJob.RunAsync();
+
+await Task.WhenAll(eventLogTask, temperatureProbeTask);
