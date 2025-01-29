@@ -61,9 +61,9 @@ namespace RabbitComputerHelper.Services
                 await _unclassifiedMessageService.CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
                 return;
             }
-            
+
             computer ??= await CreateAndSaveComputerAsync(computerName);
-            
+
             CheckAndUpdateIpAddress(computer, note);
 
             var convertedDate = sentDate.ToUniversalTime();

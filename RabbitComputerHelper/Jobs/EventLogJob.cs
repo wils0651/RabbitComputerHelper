@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace RabbitComputerHelper.Services
+namespace RabbitComputerHelper.Jobs
 {
     internal class EventLogJob
     {

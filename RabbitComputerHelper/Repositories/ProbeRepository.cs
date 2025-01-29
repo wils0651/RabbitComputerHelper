@@ -7,7 +7,7 @@ namespace RabbitComputerHelper.Repositories;
 public class ProbeRepository : IProbeRepository
 {
     private readonly DatabaseContext _context;
-    
+
     public ProbeRepository(DatabaseContext context)
     {
         _context = context;

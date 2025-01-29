@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitComputerHelper;
 using RabbitComputerHelper.Contracts;
+using RabbitComputerHelper.Jobs;
 using RabbitComputerHelper.Repositories;
 using RabbitComputerHelper.Services;
 
@@ -15,22 +16,13 @@ var builder = new ConfigurationBuilder()
 
 IConfiguration configuration = builder.Build();
 
-// Jobs
 services.AddSingleton<EventLogJob>();
-services.AddSingleton<TemperatureProbeJob>();
-
-// Services
 services.AddScoped<IMessageService, MessageService>();
-services.AddScoped<IProbeService, ProbeService>();
-services.AddScoped<IUnclassifiedMessageService, UnclassifiedMessageService>();
 
-// Repositories
 services.AddScoped<IComputerRepository, ComputerRepository>();
 services.AddScoped<IComputerTaskRepository, ComputerTaskRepository>();
 services.AddScoped<IMessageRepository, MessageRepository>();
 services.AddScoped<IUnclassifiedMessageRepository, UnclassifiedMessageRepository>();
-services.AddScoped<IProbeRepository, ProbeRepository>();
-services.AddScoped<IProbeDataRepository, ProbeDataRepository>();
 
 services.AddDbContext<DatabaseContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
@@ -38,12 +30,5 @@ services.AddDbContext<DatabaseContext>(options =>
 var serviceProvider = services.BuildServiceProvider();
 
 var eventLogJob = serviceProvider.GetService<EventLogJob>();
-var temperatureProbeJob = serviceProvider.GetService<TemperatureProbeJob>();
 
-//await eventLogJob.RunAsync();
-//await temperatureProbeJob.RunAsync();
-
-var eventLogTask = eventLogJob.RunAsync();
-var temperatureProbeTask = temperatureProbeJob.RunAsync();
-
-await Task.WhenAll(eventLogTask, temperatureProbeTask);
+await eventLogJob.RunAsync();

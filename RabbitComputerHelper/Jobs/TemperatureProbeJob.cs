@@ -1,9 +1,9 @@
-using System.Text;
 using RabbitComputerHelper.Contracts;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Text;
 
-namespace RabbitComputerHelper.Services;
+namespace RabbitComputerHelper.Jobs;
 
 internal class TemperatureProbeJob
 {
@@ -17,7 +17,7 @@ internal class TemperatureProbeJob
     {
         _probeService = probeService;
     }
-    
+
     public async Task RunAsync()
     {
         var factory = new ConnectionFactory

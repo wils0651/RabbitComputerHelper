@@ -2,11 +2,11 @@ using RabbitComputerHelper.Contracts;
 
 namespace RabbitComputerHelper.Repositories;
 
-public class ProbeDataRepository: AbstractRepository, IProbeDataRepository
+public class ProbeDataRepository : AbstractRepository, IProbeDataRepository
 {
     private readonly DatabaseContext _context;
-    
-    public ProbeDataRepository(DatabaseContext context): base(context)
+
+    public ProbeDataRepository(DatabaseContext context) : base(context)
     {
         _context = context;
     }

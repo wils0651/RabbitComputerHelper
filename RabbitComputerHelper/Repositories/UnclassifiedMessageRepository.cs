@@ -8,7 +8,7 @@ namespace RabbitComputerHelper.Repositories
     {
         private readonly DatabaseContext _context;
 
-        public UnclassifiedMessageRepository(DatabaseContext context): base(context)
+        public UnclassifiedMessageRepository(DatabaseContext context) : base(context)
         {
             _context = context;
         }

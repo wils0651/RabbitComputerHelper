@@ -11,7 +11,7 @@ public class UnclassifiedMessageService : IUnclassifiedMessageService
     {
         _unclassifiedMessageRepository = unclassifiedMessageRepository;
     }
-    
+
     public async Task CreateAndSaveUnclassifiedMessageAsync(string messageContent)
     {
         var unclassifiedMessage = new UnclassifiedMessage(messageContent);

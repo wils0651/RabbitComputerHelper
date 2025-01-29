@@ -28,14 +28,14 @@ public class ProbeService : IProbeService
             await _unclassifiedMessageService.CreateAndSaveUnclassifiedMessageAsync(messagePhrase);
             return;
         }
-        
+
         var probeName = messageParts[0].Trim();
         var temperaturePhrase = messageParts[1].Trim();
-        
+
         var createdDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
-        
+
         var probe = await _probeRepository.GetByNameAsync(probeName);
-        
+
         if (probe == null || !decimal.TryParse(temperaturePhrase, out var temperature))
         {
             messagePhrase += $"| Received: {createdDate:g}";
@@ -49,10 +49,10 @@ public class ProbeService : IProbeService
             CreatedDate = createdDate.ToUniversalTime(),
             Probe = probe
         };
-        
+
         await _probeDataRepository.AddAsync(probeData);
         await _probeDataRepository.SaveChangesAsync();
-        
+
         Console.Write("Successfully  probed");
     }
 }
