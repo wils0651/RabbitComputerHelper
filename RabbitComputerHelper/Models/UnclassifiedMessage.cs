@@ -14,6 +14,6 @@ namespace RabbitComputerHelper.Models
         public string? MessageContent { get; set; } = messageContent;
 
         [Column("createddate")]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = DateTime.Now.ToUniversalTime();
     }
 }
