@@ -9,10 +9,12 @@ using RabbitComputerHelper.Services;
 
 var services = new ServiceCollection();
 
+string environment = Environment.GetEnvironmentVariable("APP_ENV") ?? "Development";
+
 var builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
+    .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true);
 
 IConfiguration configuration = builder.Build();
 
@@ -37,6 +39,12 @@ var serviceProvider = services.BuildServiceProvider();
 
 var eventLogJob = serviceProvider.GetService<EventLogJob>();
 var temperatureProbeJob = serviceProvider.GetService<TemperatureProbeJob>();
+
+if(eventLogJob == null || temperatureProbeJob == null)
+{
+    Console.WriteLine("Failed to resolve dependencies.");
+    return;
+}
 
 var eventLogTask = eventLogJob.RunAsync();
 var temperatureProbeTask = temperatureProbeJob.RunAsync();

@@ -45,8 +45,5 @@ internal class TemperatureProbeJob
         };
 
         await channel.BasicConsumeAsync(QueueName, autoAck: true, consumer: consumer);
-
-        Console.WriteLine(" Press [enter] to exit.");
-        Console.ReadLine();
     }
 }
