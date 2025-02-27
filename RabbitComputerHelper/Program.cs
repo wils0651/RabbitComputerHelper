@@ -46,13 +46,7 @@ if (eventLogJob == null || temperatureProbeJob == null)
     return;
 }
 
-while (true)
-{
-    var eventLogTask = eventLogJob.RunAsync();
-    var temperatureProbeTask = temperatureProbeJob.RunAsync();
+var eventLogTask = eventLogJob.RunAsync();
+var temperatureProbeTask = temperatureProbeJob.RunAsync();
 
-    await Task.WhenAll(eventLogTask, temperatureProbeTask);
-
-    // Optionally add a delay to prevent tight loop
-    await Task.Delay(TimeSpan.FromSeconds(15));
-}
+await Task.WhenAll(eventLogTask, temperatureProbeTask);

@@ -44,6 +44,10 @@ internal class TemperatureProbeJob
             await _probeService.ParseAndSaveProbeDataAsync(message);
         };
 
-        await channel.BasicConsumeAsync(QueueName, autoAck: true, consumer: consumer);
+        while (true)
+        {
+            await channel.BasicConsumeAsync(QueueName, autoAck: true, consumer: consumer);
+            await Task.Delay(TimeSpan.FromSeconds(1));
+        }
     }
 }

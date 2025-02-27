@@ -44,7 +44,11 @@ namespace RabbitComputerHelper.Jobs
                 await _messageService.ParseAndSaveMessageAsync(message);
             };
 
-            await channel.BasicConsumeAsync(QueueName, autoAck: true, consumer: consumer);
+            while (true)
+            {
+                await channel.BasicConsumeAsync(QueueName, autoAck: true, consumer: consumer);
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
         }
     }
 }
