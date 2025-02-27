@@ -40,13 +40,19 @@ var serviceProvider = services.BuildServiceProvider();
 var eventLogJob = serviceProvider.GetService<EventLogJob>();
 var temperatureProbeJob = serviceProvider.GetService<TemperatureProbeJob>();
 
-if(eventLogJob == null || temperatureProbeJob == null)
+if (eventLogJob == null || temperatureProbeJob == null)
 {
     Console.WriteLine("Failed to resolve dependencies.");
     return;
 }
 
-var eventLogTask = eventLogJob.RunAsync();
-var temperatureProbeTask = temperatureProbeJob.RunAsync();
+while (true)
+{
+    var eventLogTask = eventLogJob.RunAsync();
+    var temperatureProbeTask = temperatureProbeJob.RunAsync();
 
-await Task.WhenAll(eventLogTask, temperatureProbeTask);
+    await Task.WhenAll(eventLogTask, temperatureProbeTask);
+
+    // Optionally add a delay to prevent tight loop
+    await Task.Delay(TimeSpan.FromMinutes(1));
+}
