@@ -33,7 +33,7 @@ internal class TemperatureProbeJob
         await channel.QueueDeclareAsync(
             queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-        Console.WriteLine("Waiting for Temperature Probe messages.");
+        Console.WriteLine("Waiting for Temperature Probe messages. :)");
 
         var consumer = new AsyncEventingBasicConsumer(channel);
         consumer.ReceivedAsync += async (model, ea) =>

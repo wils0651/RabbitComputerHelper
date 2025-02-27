@@ -54,5 +54,5 @@ while (true)
     await Task.WhenAll(eventLogTask, temperatureProbeTask);
 
     // Optionally add a delay to prevent tight loop
-    await Task.Delay(TimeSpan.FromMinutes(1));
+    await Task.Delay(TimeSpan.FromSeconds(15));
 }
