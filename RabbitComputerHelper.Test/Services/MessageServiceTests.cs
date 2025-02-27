@@ -46,16 +46,16 @@ namespace RabbitComputerHelper.Test.Services
         {
             // Arrange
             const string messagePhrase = "this is an invalid message";
-            
+
             // Act
             await _messageService.ParseAndSaveMessageAsync(messagePhrase);
 
             // Assert
             await _messageRepository.DidNotReceive().AddAsync(Arg.Any<Message>());
-         
+
             await _unclassifiedMessageService.Received().CreateAndSaveUnclassifiedMessageAsync(Arg.Any<string>());
         }
-        
+
         [Fact]
         public async Task ParseAndSaveMessageAsync_NoComputer_CreatesComputer()
         {
@@ -73,11 +73,11 @@ namespace RabbitComputerHelper.Test.Services
             // Assert
             await _computerRepository.Received().AddAsync(Arg.Any<Computer>());
             await _computerRepository.Received().SaveChangesAsync();
-            
+
             await _messageRepository.Received().AddAsync(Arg.Any<Message>());
             await _messageRepository.Received().SaveChangesAsync();
         }
-        
+
         [Fact]
         public async Task ParseAndSaveMessageAsync_NoComputerTask_CreatesUnclassifiedMessage()
         {
@@ -94,7 +94,7 @@ namespace RabbitComputerHelper.Test.Services
 
             // Assert
             await _unclassifiedMessageService.Received().CreateAndSaveUnclassifiedMessageAsync(Arg.Any<string>());
-            
+
             await _messageRepository.DidNotReceive().AddAsync(Arg.Any<Message>());
             await _messageRepository.DidNotReceive().SaveChangesAsync();
         }
