@@ -20,6 +20,7 @@ IConfiguration configuration = builder.Build();
 
 services.AddSingleton<EventLogJob>();
 services.AddSingleton<TemperatureProbeJob>();
+services.AddSingleton<GarageSensorJob>();
 
 services.AddScoped<IMessageService, MessageService>();
 services.AddScoped<IProbeService, ProbeService>();
@@ -39,8 +40,9 @@ var serviceProvider = services.BuildServiceProvider();
 
 var eventLogJob = serviceProvider.GetService<EventLogJob>();
 var temperatureProbeJob = serviceProvider.GetService<TemperatureProbeJob>();
+var garageSensorJob = serviceProvider.GetService<GarageSensorJob>();
 
-if (eventLogJob == null || temperatureProbeJob == null)
+if (eventLogJob == null || temperatureProbeJob == null || garageSensorJob == null)
 {
     Console.WriteLine("Failed to resolve dependencies.");
     return;
@@ -48,5 +50,6 @@ if (eventLogJob == null || temperatureProbeJob == null)
 
 var eventLogTask = eventLogJob.RunAsync();
 var temperatureProbeTask = temperatureProbeJob.RunAsync();
+var garageSensorTask = garageSensorJob.RunAsync();
 
 await Task.WhenAll(eventLogTask, temperatureProbeTask);
