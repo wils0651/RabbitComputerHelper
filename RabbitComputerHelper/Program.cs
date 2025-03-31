@@ -18,20 +18,25 @@ var builder = new ConfigurationBuilder()
 
 IConfiguration configuration = builder.Build();
 
+// Jobs
 services.AddSingleton<EventLogJob>();
 services.AddSingleton<TemperatureProbeJob>();
 services.AddSingleton<GarageSensorJob>();
 
+// Services
 services.AddScoped<IMessageService, MessageService>();
 services.AddScoped<IProbeService, ProbeService>();
 services.AddScoped<IUnclassifiedMessageService, UnclassifiedMessageService>();
+services.AddScoped<IGarageDistanceService, GarageDistanceService>();
 
+// Repositories
 services.AddScoped<IComputerRepository, ComputerRepository>();
 services.AddScoped<IComputerTaskRepository, ComputerTaskRepository>();
 services.AddScoped<IMessageRepository, MessageRepository>();
 services.AddScoped<IProbeDataRepository, ProbeDataRepository>();
 services.AddScoped<IProbeRepository, ProbeRepository>();
 services.AddScoped<IUnclassifiedMessageRepository, UnclassifiedMessageRepository>();
+services.AddScoped<IGarageDistanceRepository, GarageDistanceRepository>();
 
 services.AddDbContext<DatabaseContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));

@@ -32,7 +32,11 @@ namespace RabbitComputerHelper.Services
                 return;
             }
 
-            var garageDistance = new GarageDistance { CreatedDate = createdDate, Distance = distance };
+            var garageDistance = new GarageDistance
+            {
+                CreatedDate = createdDate.ToUniversalTime(),
+                Distance = distance
+            };
 
             await _garageDistanceRepository.AddAsync(garageDistance);
             await _garageDistanceRepository.SaveChangesAsync();
