@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using RabbitComputerHelper.Contracts;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
@@ -10,6 +11,13 @@ namespace RabbitComputerHelper.Jobs
         private const string HostName = "192.168.1.2";
         private const string UserName = "test";
         private const string Password = "test";
+
+        private readonly IGarageDistanceService _garageDistanceService;
+
+        public GarageSensorJob(IGarageDistanceService garageDistanceService)
+        {
+            this._garageDistanceService = garageDistanceService;
+        }
 
         public async Task RunAsync()
         {
@@ -35,7 +43,7 @@ namespace RabbitComputerHelper.Jobs
                 var message = Encoding.UTF8.GetString(body);
                 Console.WriteLine($"Received: {message}");
 
-                //TODO: Implement the logic to parse and save the garage sensor data
+                await _garageDistanceService.ParseAndSaveDistanceMessageAsync(message);
             };
 
             while (true)

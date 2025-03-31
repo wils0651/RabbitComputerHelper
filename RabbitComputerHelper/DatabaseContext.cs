@@ -14,5 +14,7 @@ namespace RabbitComputerHelper
 
         public DbSet<Probe> Probe { get; set; }
         public DbSet<ProbeData> ProbeData { get; set; }
+
+        public DbSet<GarageDistance> GarageDistance { get; set; }
     }
 }
