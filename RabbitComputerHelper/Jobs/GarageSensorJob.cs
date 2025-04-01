@@ -41,7 +41,7 @@ namespace RabbitComputerHelper.Jobs
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($"Received: {message}");
+                Console.WriteLine($"Received Garage Distance: {message}");
 
                 await _garageDistanceService.ParseAndSaveDistanceMessageAsync(message);
             };

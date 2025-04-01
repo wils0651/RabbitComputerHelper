@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RabbitComputerHelper;
 using RabbitComputerHelper.Contracts;
 using RabbitComputerHelper.Jobs;
 using RabbitComputerHelper.Repositories;
@@ -38,7 +37,14 @@ services.AddScoped<IProbeRepository, ProbeRepository>();
 services.AddScoped<IUnclassifiedMessageRepository, UnclassifiedMessageRepository>();
 services.AddScoped<IGarageDistanceRepository, GarageDistanceRepository>();
 
-services.AddDbContext<DatabaseContext>(options =>
+// Database Contexts
+services.AddDbContext<EventLogDatabaseContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+services.AddDbContext<ProbeDatabaseContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+services.AddDbContext<GarageSensorContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
 var serviceProvider = services.BuildServiceProvider();

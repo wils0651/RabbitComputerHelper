@@ -6,9 +6,9 @@ namespace RabbitComputerHelper.Repositories
 {
     public class ComputerRepository : AbstractRepository, IComputerRepository
     {
-        private readonly DatabaseContext _context;
+        private readonly EventLogDatabaseContext _context;
 
-        public ComputerRepository(DatabaseContext context) : base(context)
+        public ComputerRepository(EventLogDatabaseContext context) : base(context)
         {
             _context = context;
         }

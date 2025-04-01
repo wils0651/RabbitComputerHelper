@@ -6,9 +6,9 @@ namespace RabbitComputerHelper.Repositories
 {
     public class MessageRepository : AbstractRepository, IMessageRepository
     {
-        private readonly DatabaseContext _context;
+        private readonly EventLogDatabaseContext _context;
 
-        public MessageRepository(DatabaseContext context) : base(context)
+        public MessageRepository(EventLogDatabaseContext context) : base(context)
         {
             _context = context;
         }

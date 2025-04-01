@@ -6,9 +6,9 @@ namespace RabbitComputerHelper.Repositories
 {
     public class UnclassifiedMessageRepository : AbstractRepository, IUnclassifiedMessageRepository
     {
-        private readonly DatabaseContext _context;
+        private readonly EventLogDatabaseContext _context;
 
-        public UnclassifiedMessageRepository(DatabaseContext context) : base(context)
+        public UnclassifiedMessageRepository(EventLogDatabaseContext context) : base(context)
         {
             _context = context;
         }

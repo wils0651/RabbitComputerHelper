@@ -1,10 +1,12 @@
-﻿namespace RabbitComputerHelper.Repositories
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace RabbitComputerHelper.Repositories
 {
     public abstract class AbstractRepository
     {
-        private readonly DatabaseContext _context;
+        private readonly DbContext _context;
 
-        protected AbstractRepository(DatabaseContext context)
+        protected AbstractRepository(DbContext context)
         {
             _context = context;
         }
