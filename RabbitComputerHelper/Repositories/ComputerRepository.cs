@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RabbitComputerHelper.Contracts;
 using RabbitComputerHelper.Models;
+using RabbitComputerHelper.Repositories.DatabaseContexts;
 
 namespace RabbitComputerHelper.Repositories
 {

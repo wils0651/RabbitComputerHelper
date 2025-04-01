@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RabbitComputerHelper.Contracts;
 using RabbitComputerHelper.Jobs;
 using RabbitComputerHelper.Repositories;
+using RabbitComputerHelper.Repositories.DatabaseContexts;
 using RabbitComputerHelper.Services;
 
 var services = new ServiceCollection();

@@ -1,4 +1,5 @@
 ﻿using RabbitComputerHelper.Contracts;
+using RabbitComputerHelper.Repositories.DatabaseContexts;
 
 namespace RabbitComputerHelper.Repositories
 {

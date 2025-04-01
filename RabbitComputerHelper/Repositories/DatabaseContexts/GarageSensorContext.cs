@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RabbitComputerHelper.Models;
 
-namespace RabbitComputerHelper.Repositories
+namespace RabbitComputerHelper.Repositories.DatabaseContexts
 {
     public class GarageSensorContext : DbContext
     {
