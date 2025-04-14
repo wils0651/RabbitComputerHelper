@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RabbitComputerHelper.Jobs;
 
-internal class TemperatureProbeJob
+internal class TemperatureProbeJob : IJob
 {
     private readonly IProbeService _probeService;
     private const string QueueName = "esp8266_amqp";
@@ -17,6 +17,8 @@ internal class TemperatureProbeJob
     {
         _probeService = probeService;
     }
+
+    public string Name => "TemperatureProbe";
 
     public async Task RunAsync()
     {

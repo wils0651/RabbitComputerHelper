@@ -19,9 +19,9 @@ var builder = new ConfigurationBuilder()
 IConfiguration configuration = builder.Build();
 
 // Jobs
-services.AddSingleton<EventLogJob>();
-services.AddSingleton<TemperatureProbeJob>();
-services.AddSingleton<GarageSensorJob>();
+services.AddSingleton<IJob, EventLogJob>();
+services.AddSingleton<IJob, TemperatureProbeJob>();
+services.AddSingleton<IJob, GarageSensorJob>();
 
 // Services
 services.AddScoped<IMessageService, MessageService>();
@@ -50,18 +50,47 @@ services.AddDbContext<GarageSensorContext>(options =>
 
 var serviceProvider = services.BuildServiceProvider();
 
-var eventLogJob = serviceProvider.GetService<EventLogJob>();
-var temperatureProbeJob = serviceProvider.GetService<TemperatureProbeJob>();
-var garageSensorJob = serviceProvider.GetService<GarageSensorJob>();
+// Run Jobs
+var jobNameAndShouldBeRun = configuration
+    .GetSection("Jobs")
+    .GetChildren()
+    .ToDictionary(x => x.Key, x => x.Value);
 
-if (eventLogJob == null || temperatureProbeJob == null || garageSensorJob == null)
+var jobDictionary = serviceProvider
+    .GetServices<IJob>()
+    .ToDictionary(x => x.Name, x => x);
+
+var jobsToRun = new List<IJob>();
+
+foreach (var jobName in jobNameAndShouldBeRun.Keys)
 {
-    Console.WriteLine("Failed to resolve dependencies.");
+    if (jobNameAndShouldBeRun.TryGetValue(jobName, out var shouldRunBool) && bool.TryParse(shouldRunBool, out var shouldRunJob) && shouldRunJob)
+    {
+        if(!jobDictionary.TryGetValue(jobName, out var job))
+        {
+            throw new InvalidOperationException($"Failed to get job {jobName}");
+        }
+
+        Console.WriteLine($"Adding Job: {jobName}.");
+
+        jobsToRun.Add(job);
+    }
+    else
+    {
+        Console.WriteLine($"Not running job: {jobName}.");
+    }
+}
+
+if (jobsToRun.Count == 0)
+{
+    Console.WriteLine("No Jobs to run.");
     return;
 }
 
-var eventLogTask = eventLogJob.RunAsync();
-var temperatureProbeTask = temperatureProbeJob.RunAsync();
-var garageSensorTask = garageSensorJob.RunAsync();
+var jobTasks = new List<Task>();
+foreach (var job in jobsToRun)
+{
+    jobTasks.Add(job.RunAsync());
+}
 
-await Task.WhenAll(eventLogTask, temperatureProbeTask);
+await Task.WhenAll(jobTasks);
