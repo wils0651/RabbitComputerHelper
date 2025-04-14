@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RabbitComputerHelper.Jobs
 {
-    internal class GarageSensorJob
+    internal class GarageSensorJob : IJob
     {
         private const string QueueName = "garage_sensor_log";
         private const string HostName = "192.168.1.2";
@@ -18,6 +18,8 @@ namespace RabbitComputerHelper.Jobs
         {
             this._garageDistanceService = garageDistanceService;
         }
+
+        public string Name => "GarageSensor";
 
         public async Task RunAsync()
         {
@@ -34,7 +36,7 @@ namespace RabbitComputerHelper.Jobs
             await channel.QueueDeclareAsync(
                 queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-            Console.WriteLine("Waiting for Garage Sesnor messages.");
+            Console.WriteLine("Waiting for Garage Sensor messages.");
 
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.ReceivedAsync += async (model, ea) =>

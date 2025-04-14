@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RabbitComputerHelper.Jobs
 {
-    internal class EventLogJob
+    internal class EventLogJob : IJob
     {
         private const string QueueName = "eventLog_queue";
         private const string HostName = "192.168.1.2";
@@ -17,6 +17,8 @@ namespace RabbitComputerHelper.Jobs
         {
             _messageService = messageService;
         }
+
+        public string Name => "EventLog";
 
         public async Task RunAsync()
         {
