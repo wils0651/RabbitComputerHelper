@@ -1,4 +1,5 @@
-﻿using RabbitComputerHelper.Contracts;
+﻿using RabbitComputerHelper.Constants;
+using RabbitComputerHelper.Contracts;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -7,11 +8,6 @@ namespace RabbitComputerHelper.Jobs
 {
     internal class GarageSensorJob : IJob
     {
-        private const string QueueName = "garage_sensor_log";
-        private const string HostName = "192.168.1.2";
-        private const string UserName = "test";
-        private const string Password = "test";
-
         private readonly IGarageDistanceService _garageDistanceService;
 
         public GarageSensorJob(IGarageDistanceService garageDistanceService)
@@ -25,16 +21,16 @@ namespace RabbitComputerHelper.Jobs
         {
             var factory = new ConnectionFactory
             {
-                HostName = HostName,
-                UserName = UserName,
-                Password = Password
+                HostName = RabbitMqConstants.HostName,
+                UserName = RabbitMqConstants.UserName,
+                Password = RabbitMqConstants.Password
             };
 
             using var connection = await factory.CreateConnectionAsync();
             using var channel = await connection.CreateChannelAsync();
 
             await channel.QueueDeclareAsync(
-                queue: QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+                queue: RabbitMqConstants.GarageSensorQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
             Console.WriteLine("Waiting for Garage Sensor messages.");
 
@@ -50,7 +46,7 @@ namespace RabbitComputerHelper.Jobs
 
             while (true)
             {
-                await channel.BasicConsumeAsync(QueueName, autoAck: true, consumer: consumer);
+                await channel.BasicConsumeAsync(RabbitMqConstants.GarageSensorQueueName, autoAck: true, consumer: consumer);
                 await Task.Delay(TimeSpan.FromSeconds(1));
             }
         }
