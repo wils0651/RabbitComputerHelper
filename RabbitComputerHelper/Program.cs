@@ -18,6 +18,8 @@ var builder = new ConfigurationBuilder()
 
 IConfiguration configuration = builder.Build();
 
+const int delay = 2; // seconds
+
 // Jobs
 services.AddSingleton<IJob, EventLogJob>();
 services.AddSingleton<IJob, TemperatureProbeJob>();
@@ -90,7 +92,7 @@ if (jobsToRun.Count == 0)
 var jobTasks = new List<Task>();
 foreach (var job in jobsToRun)
 {
-    jobTasks.Add(job.RunAsync());
+    jobTasks.Add(job.RunAsync(2));
 }
 
 await Task.WhenAll(jobTasks);

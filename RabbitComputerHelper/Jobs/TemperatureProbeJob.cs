@@ -17,7 +17,7 @@ internal class TemperatureProbeJob : IJob
 
     public string Name => "TemperatureProbe";
 
-    public async Task RunAsync()
+    public async Task RunAsync(int delay)
     {
         var factory = new ConnectionFactory
         {
@@ -26,8 +26,8 @@ internal class TemperatureProbeJob : IJob
             Password = RabbitMqConstants.Password
         };
 
-        using var connection = await factory.CreateConnectionAsync();
-        using var channel = await connection.CreateChannelAsync();
+        await using var connection = await factory.CreateConnectionAsync();
+        await using var channel = await connection.CreateChannelAsync();
 
         await channel.QueueDeclareAsync(
             queue: RabbitMqConstants.TemperatureQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
@@ -46,7 +46,7 @@ internal class TemperatureProbeJob : IJob
         while (true)
         {
             await channel.BasicConsumeAsync(RabbitMqConstants.TemperatureQueueName, autoAck: true, consumer: consumer);
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromSeconds(delay));
         }
     }
 }

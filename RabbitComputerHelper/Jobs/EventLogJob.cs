@@ -17,7 +17,7 @@ namespace RabbitComputerHelper.Jobs
 
         public string Name => "EventLog";
 
-        public async Task RunAsync()
+        public async Task RunAsync(int delay)
         {
             var factory = new ConnectionFactory
             {
@@ -46,7 +46,7 @@ namespace RabbitComputerHelper.Jobs
             while (true)
             {
                 await channel.BasicConsumeAsync(RabbitMqConstants.EventLogQueueName, autoAck: true, consumer: consumer);
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromSeconds(delay));
             }
         }
     }

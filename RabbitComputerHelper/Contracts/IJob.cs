@@ -1,8 +1,8 @@
-﻿namespace RabbitComputerHelper.Jobs
+﻿namespace RabbitComputerHelper.Contracts
 {
     public interface IJob
     {
-        public Task RunAsync();
+        public Task RunAsync(int delay);
         public string Name { get; }
     }
 }
