@@ -2,13 +2,22 @@
 using RabbitComputerHelper.Contracts;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
 using System.Text;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 
 namespace RabbitComputerHelper.Jobs
 {
-    internal class EventLogJob : IJob
+    internal class EventLogJob : IJob, IDisposable
     {
         private readonly IMessageService _messageService;
+
+        private IConnection _connection;
+        private IChannel _channel;
+        private AsyncEventingBasicConsumer _consumer;
+        private static readonly CancellationTokenSource _cts = new();
 
         public EventLogJob(IMessageService messageService)
         {
@@ -17,7 +26,7 @@ namespace RabbitComputerHelper.Jobs
 
         public string Name => "EventLog";
 
-        public async Task RunAsync(int delay)
+        public async Task RunAsync()
         {
             var factory = new ConnectionFactory
             {
@@ -26,28 +35,54 @@ namespace RabbitComputerHelper.Jobs
                 Password = RabbitMqConstants.Password
             };
 
-            using var connection = await factory.CreateConnectionAsync();
-            using var channel = await connection.CreateChannelAsync();
+            _connection =  await factory.CreateConnectionAsync();
+            _channel = await _connection.CreateChannelAsync();
 
-            await channel.QueueDeclareAsync(
-                queue: RabbitMqConstants.EventLogQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            await _channel.QueueDeclareAsync(
+                queue: RabbitMqConstants.EventLogQueueName,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
 
-            Console.WriteLine("Waiting for EventLog messages.");
+            _consumer = new AsyncEventingBasicConsumer(_channel);
+            _consumer.ReceivedAsync += OnMessageReceived;
 
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.ReceivedAsync += async (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($"Received: {message}");
-                await _messageService.ParseAndSaveMessageAsync(message);
-            };
+            await _channel.BasicConsumeAsync(queue: RabbitMqConstants.EventLogQueueName,
+                                  autoAck: false,
+                                  consumer: _consumer);
 
-            while (true)
-            {
-                await channel.BasicConsumeAsync(RabbitMqConstants.EventLogQueueName, autoAck: true, consumer: consumer);
-                await Task.Delay(TimeSpan.FromSeconds(delay));
-            }
+            Console.WriteLine("Consumer started.");
+        }
+
+        private async Task OnMessageReceived(object sender, BasicDeliverEventArgs e)
+        {
+            var body = e.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+
+            Console.WriteLine($"Received: {message}");
+
+            await _messageService.ParseAndSaveMessageAsync(message);
+
+            await _channel.BasicAckAsync(deliveryTag: e.DeliveryTag, multiple: false);
+        }
+
+        public static void Stop()
+        {
+            _cts.Cancel();
+
+            Console.WriteLine("Consumer stopping...");
+        }
+
+        public void Dispose()
+        {
+            _consumer.ReceivedAsync -= OnMessageReceived;
+            _channel?.CloseAsync();
+            _connection?.CloseAsync();
+            _channel?.Dispose();
+            _connection?.Dispose();
+            _cts?.Dispose();
+            Console.WriteLine("Consumer disposed.");
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface IJob
     {
-        public Task RunAsync(int delay);
+        public Task RunAsync();
         public string Name { get; }
     }
 }

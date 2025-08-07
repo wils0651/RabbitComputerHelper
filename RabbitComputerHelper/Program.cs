@@ -92,7 +92,22 @@ if (jobsToRun.Count == 0)
 var jobTasks = new List<Task>();
 foreach (var job in jobsToRun)
 {
-    jobTasks.Add(job.RunAsync(2));
+    jobTasks.Add(job.RunAsync());
 }
 
-await Task.WhenAll(jobTasks);
+//await Task.WhenAll(jobTasks);
+while (true)
+{
+    try
+    {
+        await Task.WhenAll(jobTasks);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error in job execution: {ex.Message}");
+        // Optionally log the error or handle it as needed
+    }
+    
+    // Wait for the specified delay before running the jobs again
+    await Task.Delay(TimeSpan.FromSeconds(delay));
+}

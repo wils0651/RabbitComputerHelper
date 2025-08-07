@@ -17,7 +17,7 @@ namespace RabbitComputerHelper.Jobs
 
         public string Name => "GarageSensor";
 
-        public async Task RunAsync(int delay)
+        public async Task RunAsync()
         {
             var factory = new ConnectionFactory
             {
@@ -47,7 +47,7 @@ namespace RabbitComputerHelper.Jobs
             while (true)
             {
                 await channel.BasicConsumeAsync(RabbitMqConstants.GarageSensorQueueName, autoAck: true, consumer: consumer);
-                await Task.Delay(TimeSpan.FromSeconds(delay));
+                await Task.Delay(TimeSpan.FromSeconds(1)); // todo: remove
             }
         }
     }

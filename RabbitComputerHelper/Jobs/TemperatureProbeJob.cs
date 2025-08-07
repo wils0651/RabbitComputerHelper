@@ -17,7 +17,7 @@ internal class TemperatureProbeJob : IJob
 
     public string Name => "TemperatureProbe";
 
-    public async Task RunAsync(int delay)
+    public async Task RunAsync()
     {
         var factory = new ConnectionFactory
         {
@@ -46,7 +46,7 @@ internal class TemperatureProbeJob : IJob
         while (true)
         {
             await channel.BasicConsumeAsync(RabbitMqConstants.TemperatureQueueName, autoAck: true, consumer: consumer);
-            await Task.Delay(TimeSpan.FromSeconds(delay));
+            await Task.Delay(TimeSpan.FromSeconds(1));
         }
     }
 }
