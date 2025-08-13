@@ -2,11 +2,7 @@
 using RabbitComputerHelper.Contracts;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
 using System.Text;
-using System.Threading;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace RabbitComputerHelper.Jobs
 {
@@ -35,7 +31,7 @@ namespace RabbitComputerHelper.Jobs
                 Password = RabbitMqConstants.Password
             };
 
-            _connection =  await factory.CreateConnectionAsync();
+            _connection = await factory.CreateConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
 
             await _channel.QueueDeclareAsync(
@@ -71,7 +67,7 @@ namespace RabbitComputerHelper.Jobs
         {
             _cts.Cancel();
 
-            Console.WriteLine("Consumer stopping...");
+            Console.WriteLine("Event Log consumer stopping...");
         }
 
         public void Dispose()

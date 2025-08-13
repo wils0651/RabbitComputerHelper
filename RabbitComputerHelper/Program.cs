@@ -68,7 +68,7 @@ foreach (var jobName in jobNameAndShouldBeRun.Keys)
 {
     if (jobNameAndShouldBeRun.TryGetValue(jobName, out var shouldRunBool) && bool.TryParse(shouldRunBool, out var shouldRunJob) && shouldRunJob)
     {
-        if(!jobDictionary.TryGetValue(jobName, out var job))
+        if (!jobDictionary.TryGetValue(jobName, out var job))
         {
             throw new InvalidOperationException($"Failed to get job {jobName}");
         }
@@ -95,7 +95,6 @@ foreach (var job in jobsToRun)
     jobTasks.Add(job.RunAsync());
 }
 
-//await Task.WhenAll(jobTasks);
 while (true)
 {
     try
@@ -107,7 +106,7 @@ while (true)
         Console.WriteLine($"Error in job execution: {ex.Message}");
         // Optionally log the error or handle it as needed
     }
-    
+
     // Wait for the specified delay before running the jobs again
     await Task.Delay(TimeSpan.FromSeconds(delay));
 }

@@ -6,9 +6,14 @@ using System.Text;
 
 namespace RabbitComputerHelper.Jobs;
 
-internal class TemperatureProbeJob : IJob
+internal class TemperatureProbeJob : IJob, IDisposable
 {
     private readonly IProbeService _probeService;
+
+    private IConnection _connection;
+    private IChannel _channel;
+    private AsyncEventingBasicConsumer _consumer;
+    private static readonly CancellationTokenSource _cts = new();
 
     public TemperatureProbeJob(IProbeService probeService)
     {
@@ -26,27 +31,48 @@ internal class TemperatureProbeJob : IJob
             Password = RabbitMqConstants.Password
         };
 
-        await using var connection = await factory.CreateConnectionAsync();
-        await using var channel = await connection.CreateChannelAsync();
+        _connection = await factory.CreateConnectionAsync();
+        _channel = await _connection.CreateChannelAsync();
 
-        await channel.QueueDeclareAsync(
+        await _channel.QueueDeclareAsync(
             queue: RabbitMqConstants.TemperatureQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
         Console.WriteLine("Waiting for Temperature Probe messages.");
 
-        var consumer = new AsyncEventingBasicConsumer(channel);
-        consumer.ReceivedAsync += async (model, ea) =>
-        {
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine($"Received: {message}");
-            await _probeService.ParseAndSaveProbeDataAsync(message);
-        };
+        _consumer = new AsyncEventingBasicConsumer(_channel);
 
-        while (true)
-        {
-            await channel.BasicConsumeAsync(RabbitMqConstants.TemperatureQueueName, autoAck: true, consumer: consumer);
-            await Task.Delay(TimeSpan.FromSeconds(1));
-        }
+        _consumer.ReceivedAsync += OnMessageReceived;
+
+        await _channel.BasicConsumeAsync(RabbitMqConstants.TemperatureQueueName, autoAck: false, consumer: _consumer);
+    }
+
+    private async Task OnMessageReceived(object sender, BasicDeliverEventArgs e)
+    {
+        var body = e.Body.ToArray();
+        var message = Encoding.UTF8.GetString(body);
+
+        Console.WriteLine($"Received: {message}");
+
+        await _probeService.ParseAndSaveProbeDataAsync(message);
+
+        await _channel.BasicAckAsync(deliveryTag: e.DeliveryTag, multiple: false);
+    }
+
+    public static void Stop()
+    {
+        _cts.Cancel();
+
+        Console.WriteLine("Temperature Probe consumer stopping...");
+    }
+
+    public void Dispose()
+    {
+        _consumer.ReceivedAsync -= OnMessageReceived;
+        _channel?.CloseAsync();
+        _connection?.CloseAsync();
+        _channel?.Dispose();
+        _connection?.Dispose();
+        _cts?.Dispose();
+        Console.WriteLine("Temperature Probe Consumer disposed.");
     }
 }
