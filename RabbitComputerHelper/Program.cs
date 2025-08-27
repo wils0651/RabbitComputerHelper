@@ -9,7 +9,10 @@ using RabbitComputerHelper.Services;
 
 var services = new ServiceCollection();
 
+Console.WriteLine("Starting Rabbit Computer Helper...");
+
 string environment = Environment.GetEnvironmentVariable("APP_ENV") ?? "Development";
+Console.WriteLine($"Environment: {environment}");
 
 var builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

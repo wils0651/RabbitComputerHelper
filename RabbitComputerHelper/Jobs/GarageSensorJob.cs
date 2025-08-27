@@ -10,9 +10,14 @@ namespace RabbitComputerHelper.Jobs
     {
         private readonly IGarageDistanceService _garageDistanceService;
 
+        private IConnection? _connection;
+        private IChannel? _channel;
+        private AsyncEventingBasicConsumer? _consumer;
+        private static readonly CancellationTokenSource _cts = new();
+
         public GarageSensorJob(IGarageDistanceService garageDistanceService)
         {
-            this._garageDistanceService = garageDistanceService;
+            _garageDistanceService = garageDistanceService;
         }
 
         public string Name => "GarageSensor";
@@ -26,29 +31,56 @@ namespace RabbitComputerHelper.Jobs
                 Password = RabbitMqConstants.Password
             };
 
-            using var connection = await factory.CreateConnectionAsync();
-            using var channel = await connection.CreateChannelAsync();
+            _connection = await factory.CreateConnectionAsync();
+            _channel = await _connection.CreateChannelAsync();
 
-            await channel.QueueDeclareAsync(
+            await _channel.QueueDeclareAsync(
                 queue: RabbitMqConstants.GarageSensorQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
             Console.WriteLine("Waiting for Garage Sensor messages.");
 
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.ReceivedAsync += async (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine($"Received Garage Distance: {message}");
+            _consumer = new AsyncEventingBasicConsumer(_channel);
 
-                await _garageDistanceService.ParseAndSaveDistanceMessageAsync(message);
-            };
+            _consumer.ReceivedAsync += OnMessageReceived;
 
-            while (true)
+            await _channel.BasicConsumeAsync(RabbitMqConstants.GarageSensorQueueName, autoAck: false, consumer: _consumer);
+        }
+
+        private async Task OnMessageReceived(object sender, BasicDeliverEventArgs e)
+        {
+            var body = e.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+
+            Console.WriteLine($"Received: {message}");
+
+            await _garageDistanceService.ParseAndSaveDistanceMessageAsync(message);
+
+            if (_channel != null)
             {
-                await channel.BasicConsumeAsync(RabbitMqConstants.GarageSensorQueueName, autoAck: true, consumer: consumer);
-                await Task.Delay(TimeSpan.FromSeconds(1)); // todo: remove
+                await _channel.BasicAckAsync(deliveryTag: e.DeliveryTag, multiple: false);
             }
+        }
+
+        public static void Stop()
+        {
+            _cts.Cancel();
+
+            Console.WriteLine("Temperature Probe consumer stopping...");
+        }
+
+        public void Dispose()
+        {
+            if (_consumer != null)
+            {
+                _consumer.ReceivedAsync -= OnMessageReceived;
+            }
+
+            _channel?.CloseAsync();
+            _connection?.CloseAsync();
+            _channel?.Dispose();
+            _connection?.Dispose();
+            _cts?.Dispose();
+            Console.WriteLine("Temperature Probe Consumer disposed.");
         }
     }
 }
