@@ -39,6 +39,8 @@ namespace RabbitComputerHelper.Models
 
         private Message()
         {
+            Computer = null!;
+            ComputerTask = null!;
         }
     }
 }

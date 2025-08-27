@@ -14,7 +14,7 @@ public class ProbeData
     public int ProbeId { get; set; }
 
     [ForeignKey(nameof(ProbeId))]
-    public Probe Probe { get; set; }
+    public required Probe Probe { get; set; }
 
     [Column("temperature")]
     public decimal Temperature { get; set; }

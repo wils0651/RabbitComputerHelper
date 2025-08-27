@@ -10,9 +10,9 @@ internal class TemperatureProbeJob : IJob, IDisposable
 {
     private readonly IProbeService _probeService;
 
-    private IConnection _connection;
-    private IChannel _channel;
-    private AsyncEventingBasicConsumer _consumer;
+    private IConnection? _connection;
+    private IChannel? _channel;
+    private AsyncEventingBasicConsumer? _consumer;
     private static readonly CancellationTokenSource _cts = new();
 
     public TemperatureProbeJob(IProbeService probeService)
@@ -55,7 +55,10 @@ internal class TemperatureProbeJob : IJob, IDisposable
 
         await _probeService.ParseAndSaveProbeDataAsync(message);
 
-        await _channel.BasicAckAsync(deliveryTag: e.DeliveryTag, multiple: false);
+        if (_channel != null)
+        {
+            await _channel.BasicAckAsync(deliveryTag: e.DeliveryTag, multiple: false);
+        }
     }
 
     public static void Stop()
@@ -67,7 +70,11 @@ internal class TemperatureProbeJob : IJob, IDisposable
 
     public void Dispose()
     {
-        _consumer.ReceivedAsync -= OnMessageReceived;
+        if (_consumer != null)
+        {
+            _consumer.ReceivedAsync -= OnMessageReceived;
+        }
+
         _channel?.CloseAsync();
         _connection?.CloseAsync();
         _channel?.Dispose();
