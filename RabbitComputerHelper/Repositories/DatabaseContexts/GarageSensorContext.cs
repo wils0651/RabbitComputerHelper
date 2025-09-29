@@ -8,5 +8,7 @@ namespace RabbitComputerHelper.Repositories.DatabaseContexts
         public GarageSensorContext(DbContextOptions<GarageSensorContext> options) : base(options) { }
 
         public DbSet<GarageDistance> GarageDistance { get; set; }
+        
+        public DbSet<GarageStatus> GarageStatus { get; set; }
     }
 }

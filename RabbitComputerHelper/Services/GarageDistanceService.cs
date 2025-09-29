@@ -7,13 +7,16 @@ namespace RabbitComputerHelper.Services
     {
         private readonly IGarageDistanceRepository _garageDistanceRepository;
         private readonly IUnclassifiedMessageService _unclassifiedMessageService;
+        private readonly IGarageStatusRepository _garageStatusRepository;
 
         public GarageDistanceService(
             IGarageDistanceRepository garageDistanceRepository,
-            IUnclassifiedMessageService unclassifiedMessageService)
+            IUnclassifiedMessageService unclassifiedMessageService,
+            IGarageStatusRepository garageStatusRepository)
         {
             _garageDistanceRepository = garageDistanceRepository;
             _unclassifiedMessageService = unclassifiedMessageService;
+            _garageStatusRepository = garageStatusRepository;
         }
 
         public async Task ParseAndSaveDistanceMessageAsync(string messagePhrase)
@@ -32,10 +35,13 @@ namespace RabbitComputerHelper.Services
                 return;
             }
 
+            var garageStatus = await _garageStatusRepository.GetStatusForDistance(distance);
+            
             var garageDistance = new GarageDistance
             {
                 CreatedDate = createdDate.ToUniversalTime(),
-                Distance = distance
+                Distance = distance,
+                GarageStatus = garageStatus
             };
 
             await _garageDistanceRepository.AddAsync(garageDistance);
