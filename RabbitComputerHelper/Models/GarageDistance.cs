@@ -16,7 +16,7 @@ namespace RabbitComputerHelper.Models
         [Column("createddate")]
         public DateTime CreatedDate { get; set; }
         
-        [Column("garageststusid")]
+        [Column("garagestatusid")]
         public int GarageStatusId { get; set; }
 
         [ForeignKey("GarageStatusId")]
