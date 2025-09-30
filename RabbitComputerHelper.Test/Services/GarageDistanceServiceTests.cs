@@ -47,4 +47,55 @@ public class GarageDistanceServiceTests
         // Assert
         await _garageDistanceRepository.Received().AddAsync(Arg.Is<GarageDistance>(x => x.GarageStatus.GarageStatusId == 1));
     }
+
+    [Fact]
+    public async Task ParseAndSaveDistanceMessageAsync_NotDistancce_Unclassified()
+    {
+        // Arrange
+        const string messagePhrase = "ThisIsNotDistance";
+
+        // Act
+        await _garageDistanceService.ParseAndSaveDistanceMessageAsync(messagePhrase);
+
+        // Assert
+        await _garageDistanceRepository.DidNotReceive().AddAsync(Arg.Any<GarageDistance>());
+
+        await _unclassifiedMessageService.Received()
+            .CreateAndSaveUnclassifiedMessageAsync(Arg.Is<string>(x => x.Contains(messagePhrase)));
+    }
+
+    [Fact]
+    public async Task ParseAndSaveDistanceMessageAsync_ValidData_Success2()
+    {
+        // Arrange
+        const string messagePhrase = "123.4";
+
+        var garageStatus = new GarageStatus
+        {
+            GarageStatusId = 1,
+            GarageStatusName = "Test Status",
+            MaximumDistance = 130.00M,
+            MinimumDistance = 120.00M,
+        };
+
+        var lastDistanceWithStatus = new GarageDistance
+        {
+            GarageStatusId = 2
+        };
+
+        var garageEventType = new GarageEventType { GarageEventTypeId = 2, GarageEventTypeName = "Event Occured"};
+
+        _garageStatusRepository.GetStatusForDistance(Arg.Any<decimal>()).Returns(garageStatus);
+
+        _garageDistanceRepository.GetLastWithStatusAsync().Returns(lastDistanceWithStatus);
+
+        _garageEventTypeRepository.GetEventTypeByStatusIds(2, 1).Returns(garageEventType);
+
+        // Act
+        await _garageDistanceService.ParseAndSaveDistanceMessageAsync(messagePhrase);
+
+        // Assert
+        await _garageDistanceRepository.Received().AddAsync(Arg.Is<GarageDistance>(x => x.GarageStatus.GarageStatusId == 1));
+        await _garageEventLogRepository.Received().AddAsync(Arg.Is<GarageEventLog>(x => x.GarageEventTypeId == 2));
+    }
 }
