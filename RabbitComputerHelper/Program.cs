@@ -43,6 +43,8 @@ services.AddScoped<IProbeRepository, ProbeRepository>();
 services.AddScoped<IUnclassifiedMessageRepository, UnclassifiedMessageRepository>();
 services.AddScoped<IGarageDistanceRepository, GarageDistanceRepository>();
 services.AddScoped<IGarageStatusRepository, GarageStatusRepository>();
+services.AddScoped<IGarageEventTypeRepository, GarageEventTypeRepository>();
+services.AddScoped<IGarageEventLogRepository, GarageEventLogRepository>();
 
 // Database Contexts
 services.AddDbContext<EventLogDatabaseContext>(options =>

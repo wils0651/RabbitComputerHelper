@@ -11,13 +11,18 @@ public class GarageDistanceServiceTests
     private readonly IUnclassifiedMessageService _unclassifiedMessageService = Substitute.For<IUnclassifiedMessageService>();
     private readonly IGarageStatusRepository _garageStatusRepository = Substitute.For<IGarageStatusRepository>();
     private readonly IGarageEventTypeRepository _garageEventTypeRepository = Substitute.For<IGarageEventTypeRepository>();
+    private readonly IGarageEventLogRepository _garageEventLogRepository = Substitute.For<IGarageEventLogRepository>();
 
     private readonly GarageDistanceService _garageDistanceService;
 
     public GarageDistanceServiceTests()
     {
         _garageDistanceService = new GarageDistanceService(
-            _garageDistanceRepository, _unclassifiedMessageService, _garageStatusRepository, _garageEventTypeRepository);
+            _garageDistanceRepository,
+            _unclassifiedMessageService,
+            _garageStatusRepository,
+            _garageEventTypeRepository,
+            _garageEventLogRepository);
     }
 
     [Fact]

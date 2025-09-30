@@ -12,5 +12,7 @@ namespace RabbitComputerHelper.Repositories.DatabaseContexts
         public DbSet<GarageStatus> GarageStatus { get; set; }
 
         public DbSet<GarageEventType> GarageEventType { get; set; }
+
+        public DbSet<GarageEventLog> GarageEventLog { get; set; }
     }
 }

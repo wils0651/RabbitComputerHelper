@@ -9,17 +9,20 @@ namespace RabbitComputerHelper.Services
         private readonly IUnclassifiedMessageService _unclassifiedMessageService;
         private readonly IGarageStatusRepository _garageStatusRepository;
         private readonly IGarageEventTypeRepository _garageEventTypeRepository;
+        private readonly IGarageEventLogRepository _garageEventLogRepository;
 
         public GarageDistanceService(
             IGarageDistanceRepository garageDistanceRepository,
             IUnclassifiedMessageService unclassifiedMessageService,
             IGarageStatusRepository garageStatusRepository,
-            IGarageEventTypeRepository garageEventTypeRepository)
+            IGarageEventTypeRepository garageEventTypeRepository,
+            IGarageEventLogRepository garageEventLogRepository)
         {
             _garageDistanceRepository = garageDistanceRepository;
             _unclassifiedMessageService = unclassifiedMessageService;
             _garageStatusRepository = garageStatusRepository;
             _garageEventTypeRepository = garageEventTypeRepository;
+            _garageEventLogRepository = garageEventLogRepository;
         }
 
         public async Task ParseAndSaveDistanceMessageAsync(string messagePhrase)
@@ -29,7 +32,7 @@ namespace RabbitComputerHelper.Services
                 return;
             }
 
-            var createdDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+            var createdDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local).ToUniversalTime();
 
             if (!decimal.TryParse(messagePhrase, out var distance))
             {
@@ -40,11 +43,11 @@ namespace RabbitComputerHelper.Services
 
             var garageStatus = await _garageStatusRepository.GetStatusForDistance(distance);
 
-            await CheckStatusAndAddEvent(garageStatus, createdDate);
+            await CheckStatusAndAddEvent(garageStatus, createdDate, distance);
 
             var garageDistance = new GarageDistance
             {
-                CreatedDate = createdDate.ToUniversalTime(),
+                CreatedDate = createdDate,
                 Distance = distance,
                 GarageStatus = garageStatus
             };
@@ -53,7 +56,8 @@ namespace RabbitComputerHelper.Services
             await _garageDistanceRepository.SaveChangesAsync();
         }
 
-        private async Task CheckStatusAndAddEvent(GarageStatus? garageStatus, DateTime createdDate)
+        private async Task CheckStatusAndAddEvent(
+            GarageStatus? garageStatus, DateTime createdDate, decimal distance)
         {
             if (garageStatus == null)
             {
@@ -72,10 +76,17 @@ namespace RabbitComputerHelper.Services
                 throw new InvalidDataException($"GarageDistance {lastDistanceWithStatus.GarageDistanceId} has no status");
             }
 
-            var garageEventType = _garageEventTypeRepository.GetEventTypeByStatusIds(
+            var garageEventType = await _garageEventTypeRepository.GetEventTypeByStatusIds(
                 lastDistanceWithStatus.GarageStatusId.Value, garageStatus.GarageStatusId);
 
-            // Create a garageEventLog and add to repository
+            if (garageEventType == null)
+            {
+                return;
+            }
+
+            var garageEventLog = new GarageEventLog(garageEventType, distance, createdDate);
+
+            await _garageEventLogRepository.AddAsync(garageEventLog);
         }
     }
 }
