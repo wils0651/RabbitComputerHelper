@@ -4,5 +4,5 @@ namespace RabbitComputerHelper.Contracts;
 
 public interface IGarageStatusRepository
 {
-    public Task<GarageStatus> GetStatusForDistance(decimal distance);
+    public Task<GarageStatus?> GetStatusForDistance(decimal distance);
 }

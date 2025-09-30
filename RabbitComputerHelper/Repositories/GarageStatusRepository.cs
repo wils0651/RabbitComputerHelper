@@ -5,7 +5,7 @@ using RabbitComputerHelper.Repositories.DatabaseContexts;
 
 namespace RabbitComputerHelper.Repositories;
 
-public class GarageStatusRepository: AbstractRepository, IGarageStatusRepository
+public class GarageStatusRepository : AbstractRepository, IGarageStatusRepository
 {
     private readonly GarageSensorContext _context;
 
@@ -14,7 +14,7 @@ public class GarageStatusRepository: AbstractRepository, IGarageStatusRepository
         _context = context;
     }
 
-    public async Task<GarageStatus> GetStatusForDistance(decimal distance)
+    public async Task<GarageStatus?> GetStatusForDistance(decimal distance)
     {
         return await _context.GarageStatus
             .Where(g => g.MinimumDistance <= distance)

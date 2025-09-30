@@ -11,8 +11,8 @@ public class GarageStatus
     public int GarageStatusId { get; set; }
 
     [Column("garagestatusname")]
-    public string GarageStatusName { get; set; }
-    
+    public string GarageStatusName { get; set; } = string.Empty;
+
     [Column("minimumdistance")]
     public decimal MinimumDistance { get; set; }
 
