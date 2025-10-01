@@ -18,7 +18,7 @@ namespace RabbitComputerHelper.Repositories
         {
             return await _context.GarageDistance
                 .Where(gd => gd.GarageStatusId.HasValue)
-                .OrderBy(gd => gd.GarageStatusId)
+                .OrderByDescending(gd => gd.GarageDistanceId)
                 .FirstOrDefaultAsync();
         }
     }
