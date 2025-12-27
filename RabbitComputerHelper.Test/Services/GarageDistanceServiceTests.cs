@@ -83,7 +83,7 @@ public class GarageDistanceServiceTests
             GarageStatusId = 2
         };
 
-        var garageEventType = new GarageEventType { GarageEventTypeId = 2, GarageEventTypeName = "Event Occured"};
+        var garageEventType = new GarageEventType { GarageEventTypeId = 2, GarageEventTypeName = "Event Occured" };
 
         _garageStatusRepository.GetStatusForDistance(Arg.Any<decimal>()).Returns(garageStatus);
 
