@@ -1,14 +1,47 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
-
-/.vs/RabbitComputerHelper
-/RabbitComputerHelper/bin/Debug/net8.0
-/RabbitComputerHelper/obj
-/.vs/ProjectEvaluation
-/RabbitComputerHelper.Test/bin/Debug/net8.0
-/RabbitComputerHelper.Test/obj
+# .NET build output
+################################################################################
+bin/
+obj/
+publish/
+*.pdb
 *.coverage
-/RabbitComputerHelper.Test/bin/Debug/net10.0/CoverletSourceRootsMapping_RabbitComputerHelper.Test
-/RabbitComputerHelper/bin/Debug/net10.0
-/RabbitComputerHelper.Test/bin/Debug/net10.0
+*.dll.config
+
+################################################################################
+# Visual Studio / Rider
+################################################################################
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+################################################################################
+# Test results
+################################################################################
+[Tt]est[Rr]esult*/
+*.trx
+*.VisualState.xml
+TestResult.xml
+
+################################################################################
+# Environment / secrets
+################################################################################
+.env
+.env.*
+*.pfx
+*.p12
+
+################################################################################
+# Logs
+################################################################################
+*.log
+logs/
+
+################################################################################
+# OS files
+################################################################################
+.DS_Store
+Thumbs.db
