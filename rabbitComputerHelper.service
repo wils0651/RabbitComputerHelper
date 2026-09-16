@@ -1,0 +1,14 @@
+[Unit]
+Description=RabbitComputerHelper
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/apps/RabbitComputerHelper
+ExecStart=/usr/bin/dotnet /opt/apps/RabbitComputerHelper/RabbitComputerHelper.dll
+Restart=on-failure
+User=tim
+Environment=APP_ENV=Production
+
+[Install]
+WantedBy=multi-user.target
